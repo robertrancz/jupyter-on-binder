@@ -24,7 +24,9 @@ ENV \
   # Opt out of telemetry until after we install jupyter when building the image, this prevents caching of machine id
   DOTNET_INTERACTIVE_CLI_TELEMETRY_OPTOUT=true
 
-# Install .NET CLI dependencies
+# Install .NET CLI dependencies for Ubuntu
+# When updating to newer Ubuntu version, also check required version for deps 
+# E.g. for Ubuntu 20.04: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2004#dependencies
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   libc6 \
