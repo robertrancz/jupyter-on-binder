@@ -39,7 +39,8 @@ RUN apt-get update \
 # Install .NET Core SDK
 
 # When updating the SDK version, the sha512 value a few lines down must also be updated.
-ENV DOTNET_SDK_VERSION 6.0.100
+# E.g. for version 7 check the hash at https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/7.0/releases.json
+ENV DOTNET_SDK_VERSION 7.0.302
 
 RUN dotnet_sdk_version=7.0.302 \
   && curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$dotnet_sdk_version/dotnet-sdk-$dotnet_sdk_version-linux-x64.tar.gz \
@@ -48,6 +49,7 @@ RUN dotnet_sdk_version=7.0.302 \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
   && rm dotnet.tar.gz \
+  # create symbolic link
   && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
   # Trigger first run experience by running arbitrary cmd
   && dotnet help
@@ -83,11 +85,12 @@ USER ${USER}
 # Install nteract 
 RUN pip install nteract_on_jupyter
 
-# Install lastest build of Microsoft.DotNet.Interactive
-RUN dotnet tool install -g Microsoft.dotnet-interactive --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json"
+# Install latest build of Microsoft.DotNet.Interactive
+# RUN dotnet tool install -g Microsoft.dotnet-interactive --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json"
 
-# Latest stable from nuget.org
-#RUN dotnet tool install -g Microsoft.dotnet-interactive --add-source "https://api.nuget.org/v3/index.json"
+# Latest compatible version of dotnet interactive with dotnet sdk 7
+# When updating the SDK version, this will need to be updated also
+RUN dotnet tool install -g Microsoft.dotnet-interactive --version 1.0.430802 --add-source "https://api.nuget.org/v3/index.json"
 
 ENV PATH="${PATH}:${HOME}/.dotnet/tools"
 RUN echo "$PATH"
